@@ -19,7 +19,7 @@ contract CrowdFunding is ReentrancyGuard, Ownable {
 
     // service distribute
     uint public _rate = 100000;
-    uint public _fee = 1 * decimals;
+    uint public _fee = 0.01 * decimals;
 
     event BuyToken(address user, uint inputETH, uint tokenForETH, uint fee, uint boughtTokens, uint balance);
     event WithdrawETH(address user, uint amount);

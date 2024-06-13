@@ -11,11 +11,6 @@ def get_contract(web3, contractAddress, contractAbi):
     
     return contract
 
-def get_contract_totalETH(contract):
-    totalBalance = contract.functions.contractBalance().call()
-    
-    return totalBalance
-
 def coinbase_coin_spot_price(coin, currency):
     api_key = "organizations/1d87c8de-839b-4ef5-b73a-d6dca9bc9988/apiKeys/23fe4062-96b9-438c-b14f-e4b088fa8417"
     api_secret = "-----BEGIN EC PRIVATE KEY-----\nMHcCAQEEINMjhjFpmI1H+BJ4Vrq51mwomQtiZuaVLOV9jrsmYA++oAoGCCqGSM49\nAwEHoUQDQgAE/erXjwh+7HVnEdL4RjHb3Au6iCORFxA3SqvJDG6EpDxFDEtqtUtr\nWxl2NmPUaFK10tuPb6gvodjDZswH5aJKBw==\n-----END EC PRIVATE KEY-----\n"
@@ -23,6 +18,11 @@ def coinbase_coin_spot_price(coin, currency):
     coinPair = coin + "-" + currency
     priceData = client.get_spot_price(currency_pair = coinPair)
     return priceData #return Dict
+
+def get_contract_totalETH(contract):
+    totalBalance = contract.functions.contractBalance().call()
+    
+    return totalBalance
 
 def token_approve(web3, contract, From, From_pk, To, tokenAmount):
     From_add = web3.to_checksum_address(From)
@@ -79,6 +79,7 @@ if __name__ == "__main__":
     MY_TESTMAIN_PK = os.getenv('MY_TESTMAIN_PK')
     MY_TESTTEST = os.getenv('MY_TESTTEST')
     MY_TESTTEST_PK = os.getenv('MY_TESTTEST_PK')
+    
 # WEB3 setup
     network = "amoy"
     rpc_url = 'https://polygon-amoy.infura.io/v3/' + INFURA_KEY
@@ -104,7 +105,6 @@ if __name__ == "__main__":
     buyer_pk = MY_TESTTEST_PK
     deposit_ETH = 1
     tokenAmount = int(deposit_ETH * float(ETH_USD['amount']) * 10)
-    print(tokenAmount)
     token_approve(web3, tokenContract, tokenOwner, tokenOwner_pk, contractAddr, tokenAmount)
     buy_token(web3, contract, buyer, buyer_pk, deposit_ETH, tokenAmount)
     
