@@ -1,9 +1,8 @@
 import os
-
-from web3 import Web3, HTTPProvider
-from web3.exceptions import TimeExhausted
 from dotenv import load_dotenv
 
+from web3 import Web3
+from coinbase.wallet.client import Client
 
 def get_contract(web3, contractAddress, contractAbi):
     file = open(contractAbi, 'r', encoding='utf-8')
@@ -12,11 +11,27 @@ def get_contract(web3, contractAddress, contractAbi):
     
     return contract
 
+def get_contract_totalETH(contract):
+    totalBalance = contract.functions.contractBalance().call()
+    
+    return totalBalance
+
+def coinbase_coin_spot_price(coin, currency):
+    api_key = "organizations/1d87c8de-839b-4ef5-b73a-d6dca9bc9988/apiKeys/23fe4062-96b9-438c-b14f-e4b088fa8417"
+    api_secret = "-----BEGIN EC PRIVATE KEY-----\nMHcCAQEEINMjhjFpmI1H+BJ4Vrq51mwomQtiZuaVLOV9jrsmYA++oAoGCCqGSM49\nAwEHoUQDQgAE/erXjwh+7HVnEdL4RjHb3Au6iCORFxA3SqvJDG6EpDxFDEtqtUtr\nWxl2NmPUaFK10tuPb6gvodjDZswH5aJKBw==\n-----END EC PRIVATE KEY-----\n"
+    client = Client(api_key, api_secret)
+    coinPair = coin + "-" + currency
+    priceData = client.get_spot_price(currency_pair = coinPair)
+    return priceData #return Dict
+
 def token_approve(web3, contract, From, From_pk, To, tokenAmount):
     From_add = web3.to_checksum_address(From)
     To_add = web3.to_checksum_address(To)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
+    safeAllow = 100
+    tokenAmount = (tokenAmount + safeAllow) * 10**18
+    print(tokenAmount)
     tx = contract.functions.approve(To_add, tokenAmount).build_transaction(
         {"from": From_add, "nonce": nonce, "gasPrice": gas_price}
     )
@@ -27,12 +42,14 @@ def token_approve(web3, contract, From, From_pk, To, tokenAmount):
     
     return txHash, tx_receipt
 
-def buy_token(web3, contract, From, From_pk, tokenAmount):
+def buy_token(web3, contract, From, From_pk, ETHAmount, tokenAmount):
     From_add = web3.to_checksum_address(From)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    tx = contract.functions.buyToken().build_transaction(
-        {"from": From_add, "nonce": nonce, "gasPrice": gas_price, "value": tokenAmount}
+    ETHAmount = ETHAmount * contract.functions.decimals().call()
+    serviceFee = contract.functions.FEE().call()
+    tx = contract.functions.buyToken(tokenAmount).build_transaction(
+        {"from": From_add, "nonce": nonce, "gasPrice": gas_price, "value": ETHAmount+serviceFee}
     )
     signed_txn = web3.eth.account.sign_transaction(tx, From_pk)
     txHash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
@@ -58,37 +75,44 @@ def withdrawETH(web3, contract, Owner, Owner_pk):
 
 if __name__ == "__main__":
     load_dotenv(".env")
-
+    INFURA_KEY = os.getenv('INFURA_API_KEY')
+    MY_TESTMAIN_PK = os.getenv('MY_TESTMAIN_PK')
+    MY_TESTTEST = os.getenv('MY_TESTTEST')
+    MY_TESTTEST_PK = os.getenv('MY_TESTTEST_PK')
+# WEB3 setup
     network = "amoy"
-
-    web3 = Web3(Web3.HTTPProvider('https://polygon-amoy.infura.io/v3/ce98e0c088a74995bc3fd43d52a81c39'))
+    rpc_url = 'https://polygon-amoy.infura.io/v3/' + INFURA_KEY
+    web3 = Web3(Web3.HTTPProvider(rpc_url))
+    
+    contractAddr = "0xb18e018Af935F0b3a26AC8aE3eB4B1fc4d3624AB"
+    contractAbi = "./abi/contract.abi"
+    contract = get_contract(web3, contractAddr, contractAbi)
+    contractOwner = contract.functions.owner().call()
+    contractOwner_pk = MY_TESTMAIN_PK
     
     tokenContractAddr = "0xBafBe8Dc6b88868A7b58F6E5df89c3054dec93bB"
-    tokenContractAbi = "./TGV.abi"
+    tokenContractAbi = "./abi/token.abi"
     tokenContract = get_contract(web3, tokenContractAddr, tokenContractAbi)
+    tokenOwner = tokenContract.functions.owner().call()
+    tokenOwner_pk = MY_TESTMAIN_PK
     
-    contractAddr = "0x670a6EeBc4E9119B12cE69425dDC56c7B9930724"
-    contractAbi = "./contract.abi"
-    contract = get_contract(web3, contractAddr, contractAbi)
+    ETH_USD = coinbase_coin_spot_price("ETH","USD")
     
-# transaction
-    tokenOwner = '0x64a86158D40A628d626e6F6D4e707667048853eb'
-    tokenOwner_pk = '0x119b1e18189153f894f5ccee62a23dac9233df290e159ed6b2d727bad19a142b'
-    
-    buyer = '0x2c18787A16E8Be7cF2cBCdC44AD97f616d1f7C0f'
-    buyer_pk = '0x80fe9145298e6ac85a54331c9727aea41467aa996541fcb957829727ac6e1158'
+# transaction part
+    # Buy script
+    buyer = MY_TESTTEST
+    buyer_pk = MY_TESTTEST_PK
     deposit_ETH = 1
-    
-    ETHAmount = deposit_ETH * 10**tokenContract.functions.decimals().call()
-    print(ETHAmount)
-    tokenAmount = ETHAmount * 100000
+    tokenAmount = int(deposit_ETH * float(ETH_USD['amount']) * 10)
     print(tokenAmount)
+    token_approve(web3, tokenContract, tokenOwner, tokenOwner_pk, contractAddr, tokenAmount)
+    buy_token(web3, contract, buyer, buyer_pk, deposit_ETH, tokenAmount)
     
-    # token_approve(web3, tokenContract, tokenOwner, tokenOwner_pk, contractAddr, tokenAmount)
+    # get contract total ETH
+    contractBalance = get_contract_totalETH(contract)
+    print(contractBalance)
     
-    # buy_token(web3, contract, buyer, buyer_pk, ETHAmount)
-    
-    withdrawETH(web3, contract, tokenOwner, tokenOwner_pk)
-    
+    # withdraw contracts ETH to contractOwner
+    withdrawETH(web3, contract, contractOwner, contractOwner_pk)
     
     
