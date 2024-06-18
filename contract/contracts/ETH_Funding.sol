@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract CrowdFunding is ReentrancyGuard, Ownable {
+contract ETH_Funding is ReentrancyGuard, Ownable {
     IERC20 public token;
     address public tokenOwner;
     uint public FEE;
@@ -17,14 +17,14 @@ contract CrowdFunding is ReentrancyGuard, Ownable {
     uint public decimals = 10**18;
 
     // service distribute
-    uint public _fee = 0.01 * decimals;
+    uint public _fee = 10000000000000000;
 
     event BuyToken(address user, uint inputETH, uint tokenForETH, uint fee, uint boughtTokens, uint balance);
     event WithdrawETH(address user, uint amount);
     
     constructor() Ownable(msg.sender) {
         token = IERC20(_token);
-        tokenOwner = address(_tokenOwner);
+        tokenOwner = _tokenOwner;
         FEE = _fee; 
     }
 
