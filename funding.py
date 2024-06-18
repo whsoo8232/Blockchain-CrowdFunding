@@ -173,11 +173,11 @@ if __name__ == "__main__":
     token_approve(web3, tokenContract, tokenOwner, tokenOwner_pk, contractAddr, tokenAmount)
     buy_token_with_ETH(web3, contract, buyer, buyer_pk, deposit_ETH, tokenAmount)
     
-    # # # get contract total ETH
+    # get contract total ETH
     contractBalance = get_contract_totalETH(contract)
     print(contractBalance)
     
-    # # # withdraw contracts ETH to contractOwner
+    # withdraw contracts ETH to contractOwner
     withdraw_ETH(web3, contract, contractOwner, contractOwner_pk)
     
     # Buy with Token--------------
@@ -190,6 +190,7 @@ if __name__ == "__main__":
     token_approve(web3, tokenContract, tokenOwner, tokenOwner_pk, contractAddr, tokenAmount)
     buy_token_with_token(web3, contract, buyer, buyer_pk, deposit_USDT, tokenAmount)
     
-    # contractBalance = payTokenContract.functions.balanceOf(contractAddr)
+    # withdraw contracts ETH to contractOwner
+    contractBalance = payTokenContract.functions.balanceOf(contractAddr)
     payToken_balance_approve(web3, payTokenContract, contractAddr, contractOwner, contractOwner_pk, contractOwner)
     withdraw_ETH(web3, contract, contractOwner, contractOwner_pk)
