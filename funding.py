@@ -217,7 +217,7 @@ if __name__ == "__main__":
 
     # WEB3 setup
     network = "sepolia"
-    web3 = Web3(Web3.HTTPProvider("https://1rpc.io/sepolia"))
+    web3 = connect_web3(network, INFURA_KEY)
 
     # reward token Contract (ARTC)
     rewardTokenContract_address = "0x130ac05a2a5C8ba2e83021eFC0E442EA2B297f5d"
