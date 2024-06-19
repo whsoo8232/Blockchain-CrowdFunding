@@ -181,6 +181,12 @@ def buy_rewardToken_with_token(
     return tx_receipt
 
 
+def get_fundingContract_totalToken(fundingContract):
+    totalBalance = fundingContract.functions.contractBalance().call()
+
+    return totalBalance
+
+
 def withdraw_fundingContract_token(
     web3,
     tokenFundingContract,
@@ -284,7 +290,7 @@ buyer = MY_TESTTEST
 buyer_pk = MY_TESTTEST_PK
 deposit_token = 100000
 serviceFee = 100
-tokenAmount = int(deposit_token) * 10
+tokenAmount = int(deposit_token) * 10  # USDT
 payToken_approve_to_fundingContract(
     web3,
     payTokenContract,
