@@ -43,25 +43,19 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "inputETH",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tokenForETH",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "fee",
+        "name": "payTokens",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
         "name": "boughtTokens",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "fee",
         "type": "uint256"
       },
       {
@@ -114,51 +108,12 @@
   },
   {
     "inputs": [],
-    "name": "FEE",
+    "name": "_payToken",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address",
         "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "RATE",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "_fee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "_rate",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -194,7 +149,17 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "payTokenAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "tokenAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "fee",
         "type": "uint256"
       }
     ],
@@ -235,6 +200,19 @@
     "outputs": [
       {
         "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "payToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
         "name": "",
         "type": "address"
       }
@@ -290,7 +268,7 @@
   },
   {
     "inputs": [],
-    "name": "withdrawETH",
+    "name": "withdrawToken",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

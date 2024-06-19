@@ -43,7 +43,13 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "payTokens",
+        "name": "depositETH",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "boughtTokens",
         "type": "uint256"
       },
       {
@@ -55,7 +61,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "tokens",
+        "name": "balance",
         "type": "uint256"
       }
     ],
@@ -102,58 +108,6 @@
   },
   {
     "inputs": [],
-    "name": "FEE",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "_fee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "_payToken",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "_payTokenOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "_token",
     "outputs": [
       {
@@ -182,12 +136,12 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "payTokenAmount",
+        "name": "_tokenAmount",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "tokenAmount",
+        "name": "_fee",
         "type": "uint256"
       }
     ],
@@ -225,32 +179,6 @@
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "payToken",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "payTokenOwner",
     "outputs": [
       {
         "internalType": "address",
@@ -311,7 +239,7 @@
     "inputs": [],
     "name": "withdrawETH",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
