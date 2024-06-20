@@ -102,12 +102,12 @@ def get_fundingContract_totalUSDT(fundingContract):
 def deposit_ARTC_to_fundingContract(
     web3,
     ARTC_contract,
-    ARTC_owner_address,
+    ARTC_owner,
     ARTC_owner_pk,
     fundingContract_address,
     _ARTC_amount,
 ):
-    From_add = web3.to_checksum_address(ARTC_owner_address)
+    From_add = web3.to_checksum_address(ARTC_owner)
     To_add = web3.to_checksum_address(fundingContract_address)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
@@ -120,7 +120,7 @@ def deposit_ARTC_to_fundingContract(
     tx_receipt = web3.eth.wait_for_transaction_receipt(txHash)
     receipt = filter_receipt_dict(
         transactionType="deposit_ARTC_to_fundingContract",
-        From=ARTC_owner_address,
+        From=ARTC_owner,
         To=fundingContract_address,
         inputTokenType="ARTC",
         inputTokenAmount=_ARTC_amount,
@@ -171,6 +171,77 @@ def approve_USDT_to_fundingContract(
     print(receipt)
 
     return receipt, tx_receipt
+
+
+def estimateGas_approve_USDT_to_fundingContract(
+    web3,
+    USDT_contract,
+    buyer,
+    fundingContract_address,
+    _USDT_amount,
+    _serviceFee,
+):
+    From_add = web3.to_checksum_address(buyer)
+    To_add = web3.to_checksum_address(fundingContract_address)
+    gas_price = web3.eth.gas_price
+    nonce = web3.eth.get_transaction_count(From_add)
+    USDT_amount = _USDT_amount * 10 ** decimals()
+    serviceFee = _serviceFee * 10 ** decimals()
+    tokenAmount = USDT_amount + serviceFee
+    estimateGas = USDT_contract.functions.approve(To_add, tokenAmount).estimate_gas(
+        {"from": From_add, "nonce": nonce, "gasPrice": gas_price}
+    )
+
+    return estimateGas
+
+
+def estimateGas_buy_ARTC_with_ETH(
+    web3,
+    fundingContract,
+    buyer,
+    _depositETH_amount,
+    _serviceFee,
+    _ARTC_amount,
+):
+    From_add = web3.to_checksum_address(buyer)
+    gas_price = web3.eth.gas_price
+    nonce = web3.eth.get_transaction_count(From_add)
+    ARTC_amount = int(_ARTC_amount * 10 ** decimals())
+    depositETH_amount = int(_depositETH_amount * 10 ** decimals())
+    serviceFee = int(_serviceFee * 10 ** decimals())
+    estimateGas = fundingContract.functions.buy_ARTC_with_ETH(
+        ARTC_amount, serviceFee
+    ).estimate_gas(
+        {
+            "from": From_add,
+            "nonce": nonce,
+            "gasPrice": gas_price,
+            "value": depositETH_amount + serviceFee,
+        }
+    )
+
+    return estimateGas
+
+
+def estimateGas_buy_ARTC_with_USDT(
+    web3,
+    fundingContract,
+    buyer,
+    _USDT_amount,
+    _serviceFee,
+    _ARTC_amount,
+):
+    From_add = web3.to_checksum_address(buyer)
+    gas_price = web3.eth.gas_price
+    nonce = web3.eth.get_transaction_count(From_add)
+    ARTC_amount = int(_ARTC_amount * 10 ** decimals())
+    USDT_amount = int(_USDT_amount * 10 ** decimals())
+    serviceFee = int(_serviceFee * 10 ** decimals())
+    estimateGas = fundingContract.functions.buy_ARTC_with_USDT(
+        USDT_amount, ARTC_amount, serviceFee
+    ).estimate_gas({"from": From_add, "nonce": nonce, "gasPrice": gas_price})
+
+    return estimateGas
 
 
 def buy_ARTC_with_ETH(
@@ -399,29 +470,32 @@ if __name__ == "__main__":
 buyer = MY_TESTTEST
 buyer_pk = MY_TESTTEST_PK
 
-withdraw_fundingContract_ARTC(
-    web3,
-    fundingContract,
-    fundingContract_addr,
-    fundingContract_owner,
-    fundingContract_owner_pk,
+# buy ARTC with ETH
+deposit_ETH = 0.0004
+serviceFee = 0.0001
+tokenAmount = int(deposit_ETH * float(ETH_USDT["amount"]) * 10)
+estimateGas = estimateGas_buy_ARTC_with_ETH(
+    web3, fundingContract, buyer, deposit_ETH, serviceFee, tokenAmount
 )
+print(estimateGas)
+buy_ARTC_with_ETH(
+    web3, fundingContract, buyer, buyer_pk, deposit_ETH, serviceFee, tokenAmount
+)  # User sign with wallet
 
-# # buy ARTC with ETH
-# deposit_ETH = 0.0001
-# serviceFee = 0.0004
-# tokenAmount = int(deposit_ETH * float(ETH_USDT["amount"]) * 10)
-# buy_ARTC_with_ETH(
-#     web3, fundingContract, buyer, buyer_pk, deposit_ETH, serviceFee, tokenAmount
-# )  # User sign with wallet
-
-# # buy ARTC with USDT
-# deposit_USDT = 100000
-# serviceFee = 100
-# tokenAmount = int(deposit_USDT) * 10  # USDT
-# approve_USDT_to_fundingContract(
-#     web3, USDT_contract, buyer, buyer_pk, fundingContract_addr, deposit_USDT, serviceFee
-# )  # User sign with wallet
-# buy_ARTC_with_USDT(
-#     web3, fundingContract, buyer, buyer_pk, deposit_USDT, serviceFee, tokenAmount
-# )  # User sign with wallet
+# buy ARTC with USDT
+deposit_USDT = 10000
+serviceFee = 10
+tokenAmount = int(deposit_USDT) * 10  # USDT
+estimateGas = (
+    estimateGas_approve_USDT_to_fundingContract(
+        web3, USDT_contract, buyer, fundingContract_addr, deposit_USDT, serviceFee
+    )
+    + 66306
+)  # buy_ARTC_with_USDT average gasUsed
+print(estimateGas)
+approve_USDT_to_fundingContract(
+    web3, USDT_contract, buyer, buyer_pk, fundingContract_addr, deposit_USDT, serviceFee
+)  # User sign with wallet
+buy_ARTC_with_USDT(
+    web3, fundingContract, buyer, buyer_pk, deposit_USDT, serviceFee, tokenAmount
+)  # User sign with wallet
