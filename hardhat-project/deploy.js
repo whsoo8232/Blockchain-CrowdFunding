@@ -1,11 +1,11 @@
 const hardhat = require("hardhat");
 
 async function main() {
-    const Token_Funding = await hardhat.ethers.getContractFactory("Token_Funding");
+    const ARTC_Funding = await hardhat.ethers.getContractFactory("ARTC_Funding");
     
-    console.log("Deploying Token_Funding...");
+    console.log("Deploying ARTC_Funding...");
 
-    const contract = await Token_Funding.deploy();
+    const contract = await ARTC_Funding.deploy();
 
     console.log(contract.target)
 }

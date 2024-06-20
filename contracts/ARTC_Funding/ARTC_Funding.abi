@@ -49,7 +49,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "boughtTokens",
+        "name": "boughtARTC",
         "type": "uint256"
       },
       {
@@ -65,7 +65,44 @@
         "type": "uint256"
       }
     ],
-    "name": "BuyToken",
+    "name": "Buy_ARTC_With_ETH",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "depositUSDT",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "boughtARTC",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+      }
+    ],
+    "name": "Buy_ARTC_With_USDT",
     "type": "event"
   },
   {
@@ -103,12 +140,63 @@
         "type": "uint256"
       }
     ],
-    "name": "WithdrawETH",
+    "name": "Withdraw_ARTC",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Withdraw_ETH",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Withdraw_USDT",
     "type": "event"
   },
   {
     "inputs": [],
-    "name": "_token",
+    "name": "ARTC",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ARTC_owner",
     "outputs": [
       {
         "internalType": "address",
@@ -121,7 +209,46 @@
   },
   {
     "inputs": [],
-    "name": "_tokenOwner",
+    "name": "USDT",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_ARTC",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_ARTC_owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_USDT",
     "outputs": [
       {
         "internalType": "address",
@@ -136,23 +263,72 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_tokenAmount",
+        "name": "buyARTC_amount",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_fee",
+        "name": "ETH_fee",
         "type": "uint256"
       }
     ],
-    "name": "buyToken",
+    "name": "buy_ARTC_with_ETH",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "USDT_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "buyARTC_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "USDT_fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "buy_ARTC_with_USDT",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "contractBalance",
+    "name": "contract_ARTC_balance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "contract_ETH_balance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "contract_USDT_balance",
     "outputs": [
       {
         "internalType": "uint256",
@@ -197,32 +373,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "token",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "tokenOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -237,7 +387,21 @@
   },
   {
     "inputs": [],
-    "name": "withdrawETH",
+    "name": "withdraw_ARTC",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdraw_ETH",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdraw_USDT",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

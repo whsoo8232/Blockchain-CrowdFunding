@@ -1,11 +1,7 @@
-# Essential
-from web3 import Web3
-
-# env
 import os
 from dotenv import load_dotenv
 
-# coinbase crypto change rate
+from web3 import Web3
 from coinbase.wallet.client import Client
 
 
@@ -49,7 +45,7 @@ def get_contract(web3, contractAddress, contractAbi):
     return contract
 
 
-def deposit_ARTC_to_fundingContract(
+def ARTC_approve_to_fundingContract(
     web3,
     ARTC_contract,
     ARTC_owner_address,
@@ -61,8 +57,9 @@ def deposit_ARTC_to_fundingContract(
     To_add = web3.to_checksum_address(fundingContract_address)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    ARTC_amount = ARTC_amount * 10 ** decimals()
-    tx = ARTC_contract.functions.transfer(To_add, ARTC_amount).build_transaction(
+    safeAllow = 100  # For exchange rate fluctuations during transaction
+    ARTC_amount = (ARTC_amount + safeAllow) * 10 ** decimals()
+    tx = ARTC_contract.functions.approve(To_add, ARTC_amount).build_transaction(
         {"from": From_add, "nonce": nonce, "gasPrice": gas_price}
     )
     signed_txn = web3.eth.account.sign_transaction(tx, ARTC_owner_pk)
@@ -73,7 +70,7 @@ def deposit_ARTC_to_fundingContract(
     return tx_receipt
 
 
-def approve_USDT_to_fundingContract(
+def USDT_approve_to_fundingContract(
     web3,
     USDT_contract,
     buyer,
@@ -188,23 +185,6 @@ def withdraw_fundingContract_ETH(
     return tx_receipt
 
 
-def withdraw_fundingContract_ARTC(
-    web3, fundingContract, fundingContract_owner, fundingContract_owner_pk
-):
-    Owner_add = web3.to_checksum_address(fundingContract_owner)
-    gas_price = web3.eth.gas_price
-    nonce = web3.eth.get_transaction_count(Owner_add)
-    tx = fundingContract.functions.withdraw_ARTC().build_transaction(
-        {"from": Owner_add, "nonce": nonce, "gasPrice": gas_price}
-    )
-    signed_txn = web3.eth.account.sign_transaction(tx, fundingContract_owner_pk)
-    txHash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-    tx_receipt = web3.eth.wait_for_transaction_receipt(txHash)
-    print(tx_receipt)
-
-    return tx_receipt
-
-
 def withdraw_fundingContract_USDT(
     web3,
     fundingContract,
@@ -238,7 +218,7 @@ if __name__ == "__main__":
     web3 = connect_web3(network, INFURA_KEY)
 
     # ETH Funding Contract
-    fundingContract_addr = "0x480e412F5b9F361E8bee224c15f57E909556c7d0"
+    fundingContract_addr = "0x0404b75Cd5B46656D2C656b6DE3e79fA26b2771C"
     fundingContract_abi = "./contracts/ARTC_Funding/ARTC_Funding.abi"
     fundingContract = get_contract(web3, fundingContract_addr, fundingContract_abi)
     fundingContract_owner = MY_TESTMAIN  # tmp
@@ -260,26 +240,50 @@ if __name__ == "__main__":
     ETH_USDT = coinbase_coin_spot_price("ETH", "USDT")
 
 
-## transaction part
+### transaction part
+
 # SET
-buyer = MY_TESTTEST
-buyer_pk = MY_TESTTEST_PK
+buyer = "0x87460F55439594674891824dFF32ee5207d28A2f"
+buyer_pk = "cc2a7a9600f102a3f0ab847bef6365bc59820afa7f8fed7d8bb4d4424da9b353"
+tokenAmount = 100000
+tokenAmount = tokenAmount * 10 ** decimals()
+
+From_add = web3.to_checksum_address(fundingContract_addr)
+To_add = web3.to_checksum_address(buyer)
+gas_price = web3.eth.gas_price
+nonce = web3.eth.get_transaction_count(From_add)
+tx = ARTC_contract.functions.transfer(To_add, tokenAmount).build_transaction(
+    {"from": From_add, "nonce": nonce, "gasPrice": gas_price}
+)
+signed_txn = web3.eth.account.sign_transaction(tx, fundingContract_owner_pk)
+txHash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+tx_receipt = web3.eth.wait_for_transaction_receipt(txHash)
+
 
 # buy ARTC with ETH
-deposit_ETH = 0.0001
-serviceFee = 0.0004
-tokenAmount = int(deposit_ETH * float(ETH_USDT["amount"]) * 10)
-buy_ARTC_with_ETH(
-    web3, fundingContract, buyer, buyer_pk, deposit_ETH, serviceFee, tokenAmount
-)  # User sign with wallet
+# deposit_ETH = 0.0001
+# serviceFee = 0.0004
+# tokenAmount = int(deposit_ETH * float(ETH_USDT["amount"]) * 10)
+# ARTC_approve_to_fundingContract(
+#     web3, ARTC_contract, ARTC_owner, ARTC_owner_pk, fundingContract_addr, tokenAmount
+# )
+allow = ARTC_contract.functions.allowance(ARTC_owner, fundingContract_addr).call()
+print(allow)
+# buy_ARTC_with_ETH(
+#     web3, fundingContract, buyer, buyer_pk, deposit_ETH, serviceFee, tokenAmount
+# )  # User sign with wallet
 
-# buy ARTC with USDT
-deposit_USDT = 100000
-serviceFee = 100
-tokenAmount = int(deposit_USDT) * 10  # USDT
-approve_USDT_to_fundingContract(
-    web3, USDT_contract, buyer, buyer_pk, fundingContract_addr, deposit_USDT, serviceFee
-)  # User sign with wallet
-buy_ARTC_with_USDT(
-    web3, fundingContract, buyer, buyer_pk, deposit_USDT, serviceFee, tokenAmount
-)  # User sign with wallet
+
+# # buy ARTC with USDT
+# deposit_USDT = 100000
+# serviceFee = 100
+# tokenAmount = int(deposit_USDT) * 10  # USDT
+# USDT_approve_to_fundingContract(
+#     web3, USDT_contract, buyer, buyer_pk, fundingContract_addr, deposit_USDT, serviceFee
+# )  # User sign with wallet
+# ARTC_approve_to_fundingContract(
+#     web3, ARTC_contract, ARTC_owner, ARTC_owner_pk, fundingContract_addr, tokenAmount
+# )
+# buy_ARTC_with_USDT(
+#     web3, fundingContract, buyer, buyer_pk, deposit_USDT, serviceFee, tokenAmount
+# )  # User sign with wallet
