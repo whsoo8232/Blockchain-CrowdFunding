@@ -81,6 +81,18 @@ def get_contract(web3, contractAddress, contractAbi):
     return contract
 
 
+def get_fundingContract_totalETH(fundingContract):
+    totalBalance = fundingContract.functions.contract_ETH_balance().call()
+
+    return totalBalance
+
+
+def get_fundingContract_totalUSDT(fundingContract):
+    totalBalance = fundingContract.functions.contract_USDT_balance().call()
+
+    return totalBalance
+
+
 def deposit_ARTC_to_fundingContract(
     web3,
     ARTC_contract,
@@ -153,18 +165,6 @@ def approve_USDT_to_fundingContract(
     print(receipt)
 
     return receipt, tx_receipt
-
-
-def get_fundingContract_totalETH(fundingContract):
-    totalBalance = fundingContract.functions.contract_ETH_balance().call()
-
-    return totalBalance
-
-
-def get_fundingContract_totalUSDT(fundingContract):
-    totalBalance = fundingContract.functions.contract_USDT_balance().call()
-
-    return totalBalance
 
 
 def buy_ARTC_with_ETH(
