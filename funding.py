@@ -87,6 +87,12 @@ def get_fundingContract_totalETH(fundingContract):
     return totalBalance
 
 
+def get_fundingContract_totalARTC(fundingContract):
+    totalBalance = fundingContract.functions.contract_ARTC_balance().call()
+
+    return totalBalance
+
+
 def get_fundingContract_totalUSDT(fundingContract):
     totalBalance = fundingContract.functions.contract_USDT_balance().call()
 
