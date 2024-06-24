@@ -247,6 +247,7 @@ def estimateGas_buy_ARTC_with_USDT(
 def buy_ARTC_with_ETH(
     web3,
     fundingContract,
+    fundingContract_addr,
     buyer,
     buyer_pk,
     _depositETH_amount,
@@ -275,7 +276,7 @@ def buy_ARTC_with_ETH(
     receipt = filter_receipt_dict(
         transactionType="buy_ARTC_with_ETH",
         From=buyer,
-        To=fundingContract,
+        To=fundingContract_addr,
         inputTokenType="ETH",
         inputTokenAmount=_depositETH_amount,
         outputTokenType="ARTC",
@@ -294,6 +295,7 @@ def buy_ARTC_with_ETH(
 def buy_ARTC_with_USDT(
     web3,
     fundingContract,
+    fundingContract_addr,
     buyer,
     buyer_pk,
     _USDT_amount,
@@ -315,7 +317,7 @@ def buy_ARTC_with_USDT(
     receipt = filter_receipt_dict(
         transactionType="buy_ARTC_with_USDT",
         From=buyer,
-        To=fundingContract,
+        To=fundingContract_addr,
         inputTokenType="USDT",
         inputTokenAmount=_USDT_amount,
         outputTokenType="ARTC",
@@ -465,8 +467,8 @@ if __name__ == "__main__":
     ETH_USDT = coinbase_coin_spot_price("ETH", "USDT")
 
 
-## transaction part
-# SET
+# ## transaction part
+# # SET
 buyer = MY_TESTTEST
 buyer_pk = MY_TESTTEST_PK
 
@@ -479,7 +481,14 @@ estimateGas = estimateGas_buy_ARTC_with_ETH(
 )
 print(estimateGas)
 buy_ARTC_with_ETH(
-    web3, fundingContract, buyer, buyer_pk, deposit_ETH, serviceFee, tokenAmount
+    web3,
+    fundingContract,
+    fundingContract_addr,
+    buyer,
+    buyer_pk,
+    deposit_ETH,
+    serviceFee,
+    tokenAmount,
 )  # User sign with wallet
 
 # buy ARTC with USDT
@@ -497,5 +506,12 @@ approve_USDT_to_fundingContract(
     web3, USDT_contract, buyer, buyer_pk, fundingContract_addr, deposit_USDT, serviceFee
 )  # User sign with wallet
 buy_ARTC_with_USDT(
-    web3, fundingContract, buyer, buyer_pk, deposit_USDT, serviceFee, tokenAmount
+    web3,
+    fundingContract,
+    fundingContract_addr,
+    buyer,
+    buyer_pk,
+    deposit_USDT,
+    serviceFee,
+    tokenAmount,
 )  # User sign with wallet
