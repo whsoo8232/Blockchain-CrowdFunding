@@ -446,21 +446,21 @@ if __name__ == "__main__":
 
     # ETH Funding Contract
     fundingContract_addr = "0x480e412F5b9F361E8bee224c15f57E909556c7d0"
-    fundingContract_abi = "./contracts/ARTC_Funding/ARTC_Funding.abi"
+    fundingContract_abi = "./contracts_dir/ARTC_Funding/ARTC_Funding.abi"
     fundingContract = get_contract(web3, fundingContract_addr, fundingContract_abi)
     fundingContract_owner = MY_TESTMAIN  # tmp
     fundingContract_owner_pk = MY_TESTMAIN_PK  # tmp
 
     # ARTC Contract
     ARTC_contract_address = "0x130ac05a2a5C8ba2e83021eFC0E442EA2B297f5d"
-    ARTC_contract_abi = "./contracts/testGovernance/testGovernance.abi"
+    ARTC_contract_abi = "./contracts_dir/testGovernance/testGovernance.abi"
     ARTC_contract = get_contract(web3, ARTC_contract_address, ARTC_contract_abi)
     ARTC_owner = MY_TESTMAIN  # tmp
     ARTC_owner_pk = MY_TESTMAIN_PK  # tmp
 
     # USDT contract
     USDT_contract_addr = "0x777af890456cFcF93431D37E756ec06bf190e3a7"
-    USDT_contract_abi = "./contracts/payToken/payToken.abi"
+    USDT_contract_abi = "./contracts_dir/payToken/payToken.abi"
     USDT_contract = get_contract(web3, USDT_contract_addr, USDT_contract_abi)
 
     # crypto change rate
