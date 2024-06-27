@@ -105,13 +105,12 @@ def deposit_ARTC_to_fundingContract(
     ARTC_owner,
     ARTC_owner_pk,
     fundingContract_address,
-    _ARTC_amount,
+    ARTC_amount,
 ):
     From_add = web3.to_checksum_address(ARTC_owner)
     To_add = web3.to_checksum_address(fundingContract_address)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    ARTC_amount = _ARTC_amount * 10 ** decimals()
     tx = ARTC_contract.functions.transfer(To_add, ARTC_amount).build_transaction(
         {"from": From_add, "nonce": nonce, "gasPrice": gas_price}
     )
@@ -123,7 +122,7 @@ def deposit_ARTC_to_fundingContract(
         From=ARTC_owner,
         To=fundingContract_address,
         inputTokenType="ARTC",
-        inputTokenAmount=_ARTC_amount,
+        inputTokenAmount=ARTC_amount,
         gasPrice=tx_receipt["effectiveGasPrice"],
         gasUsed=tx_receipt["gasUsed"],
         transactionFee=int(tx_receipt["effectiveGasPrice"])
@@ -140,15 +139,13 @@ def approve_USDT_to_fundingContract(
     buyer,
     buyer_pk,
     fundingContract_address,
-    _USDT_amount,
-    _serviceFee,
+    USDT_amount,
+    serviceFee,
 ):
     From_add = web3.to_checksum_address(buyer)
     To_add = web3.to_checksum_address(fundingContract_address)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    USDT_amount = _USDT_amount * 10 ** decimals()
-    serviceFee = _serviceFee * 10 ** decimals()
     tokenAmount = USDT_amount + serviceFee
     tx = USDT_contract.functions.approve(To_add, tokenAmount).build_transaction(
         {"from": From_add, "nonce": nonce, "gasPrice": gas_price}
@@ -161,8 +158,8 @@ def approve_USDT_to_fundingContract(
         From=buyer,
         To=fundingContract_address,
         inputTokenType="USDT",
-        inputTokenAmount=_USDT_amount,
-        serviceFee=_serviceFee,
+        inputTokenAmount=USDT_amount,
+        serviceFee=serviceFee,
         gasPrice=tx_receipt["effectiveGasPrice"],
         gasUsed=tx_receipt["gasUsed"],
         transactionFee=int(tx_receipt["effectiveGasPrice"])
@@ -178,15 +175,13 @@ def estimateGas_approve_USDT_to_fundingContract(
     USDT_contract,
     buyer,
     fundingContract_address,
-    _USDT_amount,
-    _serviceFee,
+    USDT_amount,
+    serviceFee,
 ):
     From_add = web3.to_checksum_address(buyer)
     To_add = web3.to_checksum_address(fundingContract_address)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    USDT_amount = _USDT_amount * 10 ** decimals()
-    serviceFee = _serviceFee * 10 ** decimals()
     tokenAmount = USDT_amount + serviceFee
     estimateGas = USDT_contract.functions.approve(To_add, tokenAmount).estimate_gas(
         {"from": From_add, "nonce": nonce, "gasPrice": gas_price}
@@ -199,16 +194,13 @@ def estimateGas_buy_ARTC_with_ETH(
     web3,
     fundingContract,
     buyer,
-    _depositETH_amount,
-    _serviceFee,
-    _ARTC_amount,
+    depositETH_amount,
+    serviceFee,
+    ARTC_amount,
 ):
     From_add = web3.to_checksum_address(buyer)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    ARTC_amount = int(_ARTC_amount * 10 ** decimals())
-    depositETH_amount = int(_depositETH_amount * 10 ** decimals())
-    serviceFee = int(_serviceFee * 10 ** decimals())
     estimateGas = fundingContract.functions.buy_ARTC_with_ETH(
         ARTC_amount, serviceFee
     ).estimate_gas(
@@ -227,16 +219,13 @@ def estimateGas_buy_ARTC_with_USDT(
     web3,
     fundingContract,
     buyer,
-    _USDT_amount,
-    _serviceFee,
-    _ARTC_amount,
+    USDT_amount,
+    serviceFee,
+    ARTC_amount,
 ):
     From_add = web3.to_checksum_address(buyer)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    ARTC_amount = int(_ARTC_amount * 10 ** decimals())
-    USDT_amount = int(_USDT_amount * 10 ** decimals())
-    serviceFee = int(_serviceFee * 10 ** decimals())
     estimateGas = fundingContract.functions.buy_ARTC_with_USDT(
         USDT_amount, ARTC_amount, serviceFee
     ).estimate_gas({"from": From_add, "nonce": nonce, "gasPrice": gas_price})
@@ -250,16 +239,13 @@ def buy_ARTC_with_ETH(
     fundingContract_addr,
     buyer,
     buyer_pk,
-    _depositETH_amount,
-    _serviceFee,
-    _ARTC_amount,
+    depositETH_amount,
+    serviceFee,
+    ARTC_amount,
 ):
     From_add = web3.to_checksum_address(buyer)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    ARTC_amount = int(_ARTC_amount * 10 ** decimals())
-    depositETH_amount = int(_depositETH_amount * 10 ** decimals())
-    serviceFee = int(_serviceFee * 10 ** decimals())
     tx = fundingContract.functions.buy_ARTC_with_ETH(
         ARTC_amount, serviceFee
     ).build_transaction(
@@ -278,10 +264,10 @@ def buy_ARTC_with_ETH(
         From=buyer,
         To=fundingContract_addr,
         inputTokenType="ETH",
-        inputTokenAmount=_depositETH_amount,
+        inputTokenAmount=depositETH_amount,
         outputTokenType="ARTC",
-        outputTokenAmount=_ARTC_amount,
-        serviceFee=_serviceFee,
+        outputTokenAmount=ARTC_amount,
+        serviceFee=serviceFee,
         gasPrice=tx_receipt["effectiveGasPrice"],
         gasUsed=tx_receipt["gasUsed"],
         transactionFee=int(tx_receipt["effectiveGasPrice"])
@@ -298,16 +284,13 @@ def buy_ARTC_with_USDT(
     fundingContract_addr,
     buyer,
     buyer_pk,
-    _USDT_amount,
-    _serviceFee,
-    _ARTC_amount,
+    USDT_amount,
+    serviceFee,
+    ARTC_amount,
 ):
     From_add = web3.to_checksum_address(buyer)
     gas_price = web3.eth.gas_price
     nonce = web3.eth.get_transaction_count(From_add)
-    ARTC_amount = int(_ARTC_amount * 10 ** decimals())
-    USDT_amount = int(_USDT_amount * 10 ** decimals())
-    serviceFee = int(_serviceFee * 10 ** decimals())
     tx = fundingContract.functions.buy_ARTC_with_USDT(
         USDT_amount, ARTC_amount, serviceFee
     ).build_transaction({"from": From_add, "nonce": nonce, "gasPrice": gas_price})
@@ -319,10 +302,10 @@ def buy_ARTC_with_USDT(
         From=buyer,
         To=fundingContract_addr,
         inputTokenType="USDT",
-        inputTokenAmount=_USDT_amount,
+        inputTokenAmount=USDT_amount,
         outputTokenType="ARTC",
-        outputTokenAmount=_ARTC_amount,
-        serviceFee=_serviceFee,
+        outputTokenAmount=ARTC_amount,
+        serviceFee=serviceFee,
         gasPrice=tx_receipt["effectiveGasPrice"],
         gasUsed=tx_receipt["gasUsed"],
         transactionFee=int(tx_receipt["effectiveGasPrice"])
@@ -474,8 +457,8 @@ buyer_pk = MY_TESTTEST_PK
 
 # buy ARTC with ETH
 deposit_ETH = 0.0004
-serviceFee = 0.0001
-tokenAmount = int(deposit_ETH * float(ETH_USDT["amount"]) * 10)
+serviceFee = 0
+tokenAmount = deposit_ETH * ETH_USDT["amount"] * 10
 estimateGas = estimateGas_buy_ARTC_with_ETH(
     web3, fundingContract, buyer, deposit_ETH, serviceFee, tokenAmount
 )
@@ -493,7 +476,7 @@ buy_ARTC_with_ETH(
 
 # buy ARTC with USDT
 deposit_USDT = 10000
-serviceFee = 10
+serviceFee = 0
 tokenAmount = int(deposit_USDT) * 10  # USDT
 estimateGas = (
     estimateGas_approve_USDT_to_fundingContract(
@@ -515,3 +498,9 @@ buy_ARTC_with_USDT(
     serviceFee,
     tokenAmount,
 )  # User sign with wallet
+
+buy_event = fundingContract.events.Buy_ARTC_With_USDT
+buy_filter = buy_event.create_filter(fromBlock=6146179)
+events = buy_filter.get_all_entries()
+for event in events:
+    print(event)
