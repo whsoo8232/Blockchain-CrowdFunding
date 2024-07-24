@@ -63,6 +63,12 @@
         "internalType": "uint256",
         "name": "balance",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
       }
     ],
     "name": "Buy_ARTC_With_ETH",
@@ -99,6 +105,12 @@
         "indexed": false,
         "internalType": "uint256",
         "name": "balance",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
         "type": "uint256"
       }
     ],
@@ -270,6 +282,11 @@
         "internalType": "uint256",
         "name": "ETH_fee",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
       }
     ],
     "name": "buy_ARTC_with_ETH",
@@ -292,6 +309,11 @@
       {
         "internalType": "uint256",
         "name": "USDT_fee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_id",
         "type": "uint256"
       }
     ],

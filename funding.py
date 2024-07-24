@@ -428,7 +428,7 @@ if __name__ == "__main__":
     web3 = connect_web3(network, INFURA_KEY)
 
     # ETH Funding Contract
-    fundingContract_addr = "0x480e412F5b9F361E8bee224c15f57E909556c7d0"
+    fundingContract_addr = "0xa10f248f6525C742137e2eFb883e0cFB31f64F16"
     fundingContract_abi = "./contracts_dir/ARTC_Funding/ARTC_Funding.abi"
     fundingContract = get_contract(web3, fundingContract_addr, fundingContract_abi)
     fundingContract_owner = MY_TESTMAIN  # tmp
@@ -450,57 +450,67 @@ if __name__ == "__main__":
     ETH_USDT = coinbase_coin_spot_price("ETH", "USDT")
 
 
-# ## transaction part
-# # SET
-buyer = MY_TESTTEST
-buyer_pk = MY_TESTTEST_PK
+# ARTC_amount = 10000000 * 10 ** decimals()
+# deposit_ARTC_to_fundingContract(
+#     web3,
+#     ARTC_contract,
+#     ARTC_owner,
+#     ARTC_owner_pk,
+#     fundingContract_addr,
+#     ARTC_amount,
+# )
 
-# buy ARTC with ETH
-deposit_ETH = 0.0004
-serviceFee = 0
-tokenAmount = deposit_ETH * ETH_USDT["amount"] * 10
-estimateGas = estimateGas_buy_ARTC_with_ETH(
-    web3, fundingContract, buyer, deposit_ETH, serviceFee, tokenAmount
-)
-print(estimateGas)
-buy_ARTC_with_ETH(
-    web3,
-    fundingContract,
-    fundingContract_addr,
-    buyer,
-    buyer_pk,
-    deposit_ETH,
-    serviceFee,
-    tokenAmount,
-)  # User sign with wallet
+# # ## transaction part
+# # # SET
+# buyer = MY_TESTTEST
+# buyer_pk = MY_TESTTEST_PK
 
-# buy ARTC with USDT
-deposit_USDT = 10000
-serviceFee = 0
-tokenAmount = int(deposit_USDT) * 10  # USDT
-estimateGas = (
-    estimateGas_approve_USDT_to_fundingContract(
-        web3, USDT_contract, buyer, fundingContract_addr, deposit_USDT, serviceFee
-    )
-    + 66306
-)  # buy_ARTC_with_USDT average gasUsed
-print(estimateGas)
-approve_USDT_to_fundingContract(
-    web3, USDT_contract, buyer, buyer_pk, fundingContract_addr, deposit_USDT, serviceFee
-)  # User sign with wallet
-buy_ARTC_with_USDT(
-    web3,
-    fundingContract,
-    fundingContract_addr,
-    buyer,
-    buyer_pk,
-    deposit_USDT,
-    serviceFee,
-    tokenAmount,
-)  # User sign with wallet
+# # buy ARTC with ETH
+# deposit_ETH = 0.0004
+# serviceFee = 0
+# tokenAmount = deposit_ETH * ETH_USDT["amount"] * 10
+# estimateGas = estimateGas_buy_ARTC_with_ETH(
+#     web3, fundingContract, buyer, deposit_ETH, serviceFee, tokenAmount
+# )
+# print(estimateGas)
+# buy_ARTC_with_ETH(
+#     web3,
+#     fundingContract,
+#     fundingContract_addr,
+#     buyer,
+#     buyer_pk,
+#     deposit_ETH,
+#     serviceFee,
+#     tokenAmount,
+# )  # User sign with wallet
+
+# # buy ARTC with USDT
+# deposit_USDT = 10000
+# serviceFee = 0
+# tokenAmount = int(deposit_USDT) * 10  # USDT
+# estimateGas = (
+#     estimateGas_approve_USDT_to_fundingContract(
+#         web3, USDT_contract, buyer, fundingContract_addr, deposit_USDT, serviceFee
+#     )
+#     + 66306
+# )  # buy_ARTC_with_USDT average gasUsed
+# print(estimateGas)
+# approve_USDT_to_fundingContract(
+#     web3, USDT_contract, buyer, buyer_pk, fundingContract_addr, deposit_USDT, serviceFee
+# )  # User sign with wallet
+# buy_ARTC_with_USDT(
+#     web3,
+#     fundingContract,
+#     fundingContract_addr,
+#     buyer,
+#     buyer_pk,
+#     deposit_USDT,
+#     serviceFee,
+#     tokenAmount,
+# )  # User sign with wallet
 
 buy_event = fundingContract.events.Buy_ARTC_With_USDT
-buy_filter = buy_event.create_filter(fromBlock=6146179)
+buy_filter = buy_event.create_filter(fromBlock=6223829, lastBlock=6223829)
 events = buy_filter.get_all_entries()
 for event in events:
     print(event)

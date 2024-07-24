@@ -19,8 +19,8 @@ contract ARTC_Funding is ReentrancyGuard, Ownable {
 
     uint public decimals = 18;
 
-    event Buy_ARTC_With_ETH(address user, uint depositETH, uint boughtARTC, uint fee, uint balance);
-    event Buy_ARTC_With_USDT(address user, uint depositUSDT, uint boughtARTC, uint fee, uint balance);
+    event Buy_ARTC_With_ETH(address user, uint depositETH, uint boughtARTC, uint fee, uint balance, uint id);
+    event Buy_ARTC_With_USDT(address user, uint depositUSDT, uint boughtARTC, uint fee, uint balance, uint id);
     event Withdraw_ETH(address user, uint amount);
     event Withdraw_ARTC(address user, uint amount);
     event Withdraw_USDT(address user, uint amount);
@@ -43,17 +43,17 @@ contract ARTC_Funding is ReentrancyGuard, Ownable {
         return USDT.balanceOf(address(this));
     }    
 
-    function buy_ARTC_with_ETH(uint256 buyARTC_amount, uint256 ETH_fee) external payable {
+    function buy_ARTC_with_ETH(uint256 buyARTC_amount, uint256 ETH_fee, uint256 _id) external payable {
         require(msg.value - ETH_fee > 0, "You must send some Ether to buy tokens");
         require(ARTC.transfer(msg.sender, buyARTC_amount), "ARTC transfer failed");
-        emit Buy_ARTC_With_ETH(msg.sender, msg.value, buyARTC_amount, ETH_fee, address(this).balance);
+        emit Buy_ARTC_With_ETH(msg.sender, msg.value, buyARTC_amount, ETH_fee, address(this).balance, _id);
     }
 
-    function buy_ARTC_with_USDT(uint256 USDT_amount, uint256 buyARTC_amount, uint256 USDT_fee) external payable {
+    function buy_ARTC_with_USDT(uint256 USDT_amount, uint256 buyARTC_amount, uint256 USDT_fee, uint256 _id) external payable {
         require(USDT_amount - USDT_fee > 0, "You must send some Ether to buy tokens");
         require(USDT.transferFrom(msg.sender, address(this), USDT_amount + USDT_fee), "USDT transfer failed");
         require(ARTC.transfer(msg.sender, buyARTC_amount), "ARTC transfer failed");
-        emit Buy_ARTC_With_USDT(msg.sender, USDT_amount, buyARTC_amount, USDT_fee, USDT.balanceOf(address(this)));
+        emit Buy_ARTC_With_USDT(msg.sender, USDT_amount, buyARTC_amount, USDT_fee, USDT.balanceOf(address(this)), _id);
     }
 
     function withdraw_ETH() external onlyOwner {
